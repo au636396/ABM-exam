@@ -1,0 +1,124 @@
+---
+title: "ams esamen"
+author: "Cecilie Vestergaad"
+date: "5/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+
+```{r}
+df20 <- read.csv(file = "analysis20.csv")
+df50 <- read.csv(file = "analysis50.csv")
+df0 <- read.csv(file = "analysis0.csv")
+
+mean(df20$count.yps.with..radpoints...10.)
+mean(df50$count.yps.with..radpoints...10.)
+mean(df0$count.yps.with..radpoints...10.)
+```
+
+
+```{r}
+plot(density(df20$count.yps.with..radpoints...10.))
+plot(density(df50$count.yps.with..radpoints...10.))
+plot(density(df0$count.yps.with..radpoints...10.))
+```
+
+
+```{r}
+theme_set(theme_classic())
+
+g20 <- ggplot(df20, aes(count.yps.with..radpoints...10.)) +
+ geom_density(aes(fill=factor(count.yps.with..radpoints...10.)), alpha=0.8) + 
+    labs(title="Density plot 20", 
+         subtitle="Density distribution of amount of radicalised people",
+         x="radicalised people",
+         fill="# Cylinders")
+
+
+g50 <- ggplot(df50, aes(count.yps.with..radpoints...10.)) +
+  geom_density(aes(fill=factor(count.yps.with..radpoints...10.)), alpha=0.8) + 
+    labs(title="Density plot 50", 
+         subtitle="Density distribution of amount of radicalised people",
+         x="radicalised people",
+         fill="# Cylinders")
+
+
+g0 <- ggplot(df0, aes(count.yps.with..radpoints...10.)) +
+   geom_density(aes(fill=factor(count.yps.with..radpoints...10.)), alpha=0.8) + 
+    labs(title="Density plot 0", 
+         subtitle="Density distribution of amount of radicalised people",
+         x="radicalised people",
+         fill="# Cylinders")
+
+gridExtra::grid.arrange(g20, g50, g0, nrow = 2)
+```
+
+
+
+```{r}
+df202 <- subset(df20, X.run.number. == "2")
+
+  p <- ggplot(df202, aes(ticks, count.yps.with..radpoints...10.)) +
+    geom_path(color = "black") +
+    theme_light() 
+  
+  print(p)
+```
+
+
+```{r}
+
+  p <- ggplot(df20, aes(ticks, count.yps.with..radpoints...10., color = X.run.number.)) +
+    theme_light() 
+  
+  print(p)
+  
+  
+  gg <- ggplot(df20, aes(x = ticks, y = count.yps.with..radpoints...10.)) + 
+  geom_point(aes(col=X.run.number.)) + 
+  geom_smooth(method="loess", se=F) + 
+  xlim(c(0, 0.1)) + 
+  ylim(c(0, 500000)) 
+  #labs(subtitle="Area Vs Population", 
+     #  y="Population", 
+      # x="Area", 
+       #title="Scatterplot", 
+       #caption = "Source: midwest")
+
+plot(gg)
+```
+
+
+```{r}
+#making one big dataframe:
+dfall <- rbind(df20, df50, df0)
+```
+
+
+```{r}
+#trying to make collum with mean rad p
+
+dffall <- dfall %>% group_by(ticks)  
+dfall$mean.rad <- (mean(dfall$count.yps.with..radpoints...10.))
+
+```
+
+
+```{r}
+g <- ggplot(dfall, aes(count.yps.with..radpoints...10.)) +
+   geom_density(aes(fill=factor(procent.of.traind.goodin)), alpha=0.7) + 
+    labs(title="Density plot 0", 
+         subtitle="Density distribution of amount of radicalised people",
+         x="radicalised people",
+         fill="# Cylinders")
+g
+```
+
