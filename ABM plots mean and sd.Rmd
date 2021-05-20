@@ -1,0 +1,95 @@
+---
+title: "ams esamen"
+author: "Cecilie Vestergaad"
+date: "5/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+
+```{r}
+#loading the files:
+df20 <- read.csv(file = "analysis20.csv")
+df50 <- read.csv(file = "analysis50.csv")
+df0 <- read.csv(file = "analysis0.csv")
+
+#renaming a long name form netlogo to "radicalised.People"
+df20$radicalised.People <- df20$count.yps.with..radpoints...10.
+df50$radicalised.People <- df50$count.yps.with..radpoints...10.
+df0$radicalised.People <- df0$count.yps.with..radpoints...10.
+
+#removing the old one
+df20$count.yps.with..radpoints...10. <- NULL
+df50$count.yps.with..radpoints...10. <- NULL
+df0$count.yps.with..radpoints...10. <- NULL
+```
+
+```{r}
+#making a subset of the data that only is the final results (at ticks = 1000)
+df20100 <- subset(df20, ticks == "1000")
+df50100 <- subset(df50, ticks == "1000")
+df0100 <- subset(df0, ticks == "1000")
+
+#finding the mean:
+mean(df20100$radicalised.People)
+mean(df50100$radicalised.People)
+mean(df0100$radicalised.People)
+
+#finding the sd:
+sd(df20100$radicalised.People)
+sd(df50100$radicalised.People)
+sd(df0100$radicalised.People)
+```
+
+
+```{r}
+theme_set(theme_classic())
+
+g20100<- ggplot(df20100, aes(radicalised.People)) +
+ geom_density(aes(fill=factor(radicalised.People)), alpha=0.8) + 
+    labs(title="Density plot with 20% trained goodins", 
+         x="radicalised people")
+
+
+g50100 <- ggplot(df50100, aes(radicalised.People)) +
+  geom_density(aes(fill=factor(radicalised.People)), alpha=0.8) + 
+    labs(title="Density plot with 50% trained goodins", 
+         x="radicalised people")
+
+
+g0100 <- ggplot(df0100, aes(radicalised.People)) +
+  geom_density(aes(fill=factor(radicalised.People)), alpha=0.8) + 
+    labs(title="Density plot with 0% trained goodins", 
+         x="radicalised people")
+
+
+g20100
+g50100
+g0100
+#making the plots be on one picture
+
+gridExtra::grid.arrange(g20100, g50100, g0100, nrow = 2)
+```
+```{r}
+#making one big dataframe:
+dfall100 <- rbind(df20100, df50100, df0100)
+```
+
+
+```{r}
+g <- ggplot(dfall100, aes(radicalised.People)) +
+   geom_density(aes(fill=factor(procent.of.traind.goodin)), alpha=0.7) + 
+    labs(title="Density plot for all", 
+         subtitle="Density distribution of amount of radicalised people",
+         x="radicalised people",
+         fill="Percentage of trained goodins")
+g
+```
+
